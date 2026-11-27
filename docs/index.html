@@ -1,0 +1,40 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>خريطة مستويات المعامل</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<style>html,body,#map{height:100%;margin:0;font-family:system-ui,sans-serif}
+#sum{position:absolute;z-index:1000;top:10px;left:10px;background:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 1px 6px #0004;font-size:13px;max-width:260px}
+#sum select{width:100%;margin-bottom:6px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:4px}
+.pop{direction:rtl;font-size:13px;line-height:1.7}</style></head><body>
+<div id="map"></div><div id="sum"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script>
+const COL={1:'#d9534f',2:'#f0ad4e',3:'#2e9e5b'}, NAME={1:'مستوى أول',2:'مستوى تاني',3:'مستوى تالت'};
+const map=L.map('map').setView([30.05,31.24],10);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+const cluster=L.markerClusterGroup().addTo(map), routeLayer=L.layerGroup().addTo(map);
+const mk=(c,col)=>L.circleMarker([c.lat,c.lon],{radius:8,color:'#fff',weight:2,fillColor:col,fillOpacity:1});
+const fmt=t=>t?`${t.approx?'~':''}${t.min} د (${t.name})`:'غير متاح';
+function row(label,t){return t?`<div>${label}: <b>${fmt(t)}</b></div>`:''}
+fetch('data/built.json').then(r=>r.json()).then(d=>{
+  d.hospitals.forEach(h=>L.marker([h.lat,h.lon],{title:h.name}).bindPopup(`<div class=pop>🏥 ${h.name}</div>`).addTo(map));
+  d.centers.forEach(c=>{
+    const m=mk(c,COL[c.level]);
+    let h=`<div class=pop><b>${c.name}</b><br>${NAME[c.level]}`;
+    if(c.level==1){h+=row('أقرب تاني',c.to.l2)+row('أقرب تالت',c.to.l3)}
+    if(c.level==2)h+=row('أقرب تالت',c.to.l3);
+    if(c.level==3)h+=row('أقرب مستشفى معتمدة',c.to.hospital);
+    m.bindPopup(h+'</div>');
+    m.on('popupopen',()=>{routeLayer.clearLayers();Object.values(c.to).forEach(t=>t&&L.polyline(t.line,{color:'#337ab7',weight:3,dashArray:t.approx?'6 6':null}).addTo(routeLayer))});
+    cluster.addLayer(m)});
+  const sel=`<select id=g><option value=all>كل المحافظات</option>${d.governorates.map(g=>`<option value=${g.id}>${g.name}</option>`).join('')}</select>`;
+  const draw=id=>{const s=id=='all'?d.all:d.governorates.find(g=>g.id==id).summary;
+    document.getElementById('sum').innerHTML=sel+[1,2,3].map(n=>`<div><span class=dot style="background:${COL[n]}"></span>${NAME[n]}: <b>${s.count['l'+n]}</b></div>`).join('')+
+    `<hr><div>متوسط أول←تاني: ${s.avgMin.l1_to_l2??'-'} د</div><div>أول←تالت: ${s.avgMin.l1_to_l3??'-'} د</div><div>تاني←تالت: ${s.avgMin.l2_to_l3??'-'} د</div><div>تالت←مستشفى: ${s.avgMin.l3_to_hospital??'-'} د</div><small>الدقايق تقريبية، بالسيارة بدون زحمة</small>`;
+    document.getElementById('g').value=id;document.getElementById('g').onchange=e=>draw(e.target.value)};
+  draw('all');
+  if(d.centers.length)map.fitBounds(cluster.getBounds().pad(.1));
+});
+</script></body></html>
