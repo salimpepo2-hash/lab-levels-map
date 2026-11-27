@@ -1,5 +1,5 @@
 // lab-levels-map front end. Data: data/built.json (made by scripts/build.mjs).
-const COL = { 1: '#d9534f', 2: '#f0ad4e', 3: '#2e9e5b' };
+const COL = { 1: '#2e9e5b', 2: '#f2b705', 3: '#d9534f' }; // level 1 green, level 2 yellow, level 3 red
 const NAME = { 1: 'مستوى أول', 2: 'مستوى تاني', 3: 'مستوى تالت' };
 const FAR_MIN = 20; // minutes shown in red from here up
 const $ = id => document.getElementById(id);
@@ -10,8 +10,19 @@ let D, govName = {};
 const markers = {};
 
 const map = L.map('map').setView([30.05, 31.24], 10);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
-const cluster = L.markerClusterGroup({ iconCreateFunction: c => L.divIcon({ html: `<div class=cl>${c.getChildCount()}</div>`, className: '', iconSize: [34, 34] }) }).addTo(map);
+// Base maps (no API key needed). The first one is the default and is the same map as before.
+const OSM = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const BASES = {
+  'خريطة الشوارع (الافتراضية)': L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: OSM }),
+  'خريطة فاتحة (أهدى وأوضح للمراكز)': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, maxNativeZoom: 16, attribution: 'Tiles © Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community' }),
+  'صور أقمار صناعية': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Tiles © Esri, Maxar, Earthstar Geographics, and the GIS User Community' })
+};
+BASES['خريطة الشوارع (الافتراضية)'].addTo(map);
+L.control.layers(BASES, null, { position: 'topright', collapsed: true }).addTo(map);
+const cluster = L.layerGroup().addTo(map); // no clustering: every center is its own pin
+// small pins when zoomed out so 60 centers stay readable, full size from zoom 12
+const setZoomClass = () => map.getContainer().classList.toggle('z-lo', map.getZoom() < 12);
+map.on('zoomend', setZoomClass);
 const routeLayer = L.layerGroup().addTo(map);
 
 const key = c => c.gov + ':' + c.id;
@@ -19,7 +30,7 @@ const inScope = c => (!S.gov || c.gov === S.gov) && (!S.admin || c.admin === S.a
 const scopeList = () => D.centers.filter(inScope);
 const visibleList = () => scopeList().filter(c => S.levels[c.level]);
 const access = c => (c.level === 3 ? c.to.hospital : (c.to.l3 || c.to.l2)) || null;
-function fill(c) { if (S.dev >= 0) return !c.deviceList ? '#9e9e9e' : hasDev(c) ? '#2e7d32' : '#c62828'; return COL[c.level]; }
+const fill = c => COL[c.level]; // pin color is always the level; device status is a small badge
 const hasDev = c => !!(c.deviceList && S.dev >= 0 && c.deviceList[S.dev] > 0);
 const devCount = c => c.deviceList ? c.deviceList.filter(n => n > 0).length : null;
 const csvCell = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
@@ -115,7 +126,7 @@ function renderTable(list) {
   [...$('tp-body').rows].forEach(tr => tr.onclick = () => {
     const m = markers[tr.dataset.k]; if (!m) return;
     if (innerWidth < 700) $('tp').style.display = 'none';
-    cluster.zoomToShowLayer(m, () => m.openPopup());
+    map.setView(m.getLatLng(), Math.max(map.getZoom(), 15)); m.openPopup();
   });
 }
 
@@ -124,13 +135,15 @@ function draw(fit) {
   const list = visibleList(), pts = [];
   for (const k in markers) delete markers[k];
   list.forEach(c => {
-    const m = L.circleMarker([c.lat, c.lon], { radius: 8, color: '#fff', weight: 2, fillColor: fill(c), fillOpacity: 1 });
+    // pin shape with the level number inside; with a device filter a small badge shows available / not available / no data
+    const bd = S.dev < 0 ? '' : !c.deviceList ? '<i class="bd bn">?</i>' : hasDev(c) ? '<i class="bd by">✓</i>' : '<i class="bd bx">✕</i>';
+    const m = L.marker([c.lat, c.lon], { title: c.name, icon: L.divIcon({ html: `<div class=pin style="background:${fill(c)}"><b class=l${c.level}>${c.level}</b></div>${bd}`, className: '', iconSize: [30, 30], iconAnchor: [0, 30], popupAnchor: [0, -34] }) });
     m.bindPopup(() => popup(c));
     m.on('popupopen', () => { routeLayer.clearLayers(); Object.values(c.to).forEach(t => t && L.polyline(t.line, { color: '#337ab7', weight: 3, dashArray: t.approx ? '6 6' : null }).addTo(routeLayer)); });
     cluster.addLayer(m); markers[key(c)] = m; pts.push([c.lat, c.lon]);
   });
   if (fit && pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.1), Object.assign({ maxZoom: 14 }, innerWidth > 700 ? { paddingTopLeft: [300, 10] } : { paddingBottomRight: [0, Math.round(innerHeight * 0.35)] }));
-  renderCard(); renderTable(list);
+  setZoomClass(); renderCard(); renderTable(list);
 }
 
 function fillAdmins() {
@@ -144,7 +157,7 @@ function fillAdmins() {
 
 fetch('data/built.json').then(r => r.json()).then(d => {
   D = d; d.governorates.forEach(g => govName[g.id] = g.name);
-  d.hospitals.forEach(h => L.marker([h.lat, h.lon], { title: h.name, icon: L.divIcon({ html: '<div class=hs>H</div>', className: '', iconSize: [22, 22] }) }).bindPopup(`<div class=pop>مستشفى معتمدة: ${esc(h.name)}</div>`).addTo(map));
+  d.hospitals.forEach(h => L.marker([h.lat, h.lon], { title: h.name, icon: L.divIcon({ html: '<div class=hs>H</div>', className: '', iconSize: [28, 28] }), zIndexOffset: 500 }).bindPopup(`<div class=pop>مستشفى معتمدة: ${esc(h.name)}</div>`).addTo(map));
   // governorate selector exists only when there is more than one governorate
   $('gov-row').hidden = d.governorates.length < 2;
   if (d.governorates.length > 1) $('gov').innerHTML = '<option value="">كل المحافظات</option>' + d.governorates.map(g => `<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('');

@@ -1,8 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>خريطة مستويات المعامل</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
 <style>
 html,body,#map{height:100%;margin:0;font-family:system-ui,sans-serif}
 #panel{position:absolute;z-index:1000;top:10px;left:10px;width:290px;max-height:calc(100% - 20px);overflow:auto;background:#fff;border-radius:10px;box-shadow:0 1px 8px #0005;font-size:13px}
@@ -15,7 +13,13 @@ button.b,#reset{padding:7px 10px;margin:4px 0;font-size:13px;border:1px solid #9
 .lv{display:flex;gap:10px;flex-wrap:wrap;padding:2px 0}.lv label{font-weight:400;color:#222;font-size:13px}
 small{display:block;color:#777;margin-top:6px}
 .cl{width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:#37474f;color:#fff;font-weight:700;border:2px solid #fff;box-shadow:0 1px 4px #0006}
-.hs{width:22px;height:22px;line-height:22px;text-align:center;background:#1565c0;color:#fff;font-weight:700;border-radius:4px;border:2px solid #fff;box-shadow:0 1px 4px #0006}
+.pin{box-sizing:border-box;width:30px;height:30px;border-radius:50% 50% 50% 0;transform-origin:0 100%;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 0 0 2px #263238,0 3px 7px #000a;display:flex;align-items:center;justify-content:center}
+.pin b{transform:rotate(45deg);color:#fff;font-size:15px;line-height:1;text-shadow:0 0 3px #000,0 0 2px #000}.pin b.l2{color:#222;text-shadow:0 0 2px #fff}
+.bd{position:absolute;left:8px;top:-12px;width:16px;height:16px;line-height:16px;border-radius:50%;text-align:center;font:700 11px/16px system-ui;font-style:normal;color:#fff;border:2px solid #fff;box-shadow:0 0 0 1.5px #263238;box-sizing:content-box}
+.bd.by{background:#1b5e20}.bd.bx{background:#b71c1c}.bd.bn{background:#757575}
+.z-lo .pin{transform:rotate(-45deg) scale(.62)}.z-lo .pin b{display:none}.z-lo .bd{left:2px;top:-4px;transform:scale(.8)}.z-lo .hs{transform:scale(.75)}
+.leaflet-control-layers{font-size:14px;direction:rtl;text-align:right}
+.hs{width:28px;height:28px;line-height:28px;font-size:15px;text-align:center;background:#1565c0;color:#fff;font-weight:700;border-radius:4px;border:2px solid #fff;box-shadow:0 1px 4px #0006}
 .pop{direction:rtl;font-size:13px;line-height:1.7;max-height:300px;overflow:auto}.pop details{margin-top:4px}.pop li{list-style:none}.on{color:#2e7d32}.off{color:#c62828}
 #tp{display:none;position:absolute;z-index:1100;top:10px;right:10px;bottom:10px;width:360px;background:#fff;border-radius:10px;box-shadow:0 1px 8px #0005;overflow:hidden;flex-direction:column}
 #tp[style*="block"]{display:flex!important}
@@ -36,7 +40,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:#f3f6f8}.sub{font-size:11px;co
   <div class="row" id="gov-row" hidden><label>المحافظة</label><select id="gov"></select></div>
   <div class="row" id="admin-row"><label>الإدارة الصحية</label><select id="admin"></select></div>
   <div class="row"><label>المستويات</label><div class="lv"><label><input type="checkbox" id="lv1" checked> أول</label><label><input type="checkbox" id="lv2" checked> تاني</label><label><input type="checkbox" id="lv3" checked> تالت</label></div></div>
-  <div class="row" id="dev-row" hidden><label>فلتر جهاز (أخضر = متوفر، أحمر = غير متوفر)</label><select id="dev"></select></div>
+  <div class="row" id="dev-row" hidden><label>فلتر جهاز (علامة ✓ = متوفر، ✕ = غير متوفر على الدبوس)</label><select id="dev"></select></div>
   <div class="row"><button class="b" id="tbl" type="button">جدول المراكز (الأبعد أولًا)</button><button class="b" id="csv" type="button">تنزيل CSV</button></div>
  </div>
  <div id="card"></div>
@@ -44,6 +48,5 @@ tbody tr{cursor:pointer}tbody tr:hover{background:#f3f6f8}.sub{font-size:11px;co
 <div id="tp"><div id="tp-head"><span id="tp-title"></span><button id="tp-close" type="button">×</button></div>
  <div id="tpw"><table><thead><tr><th>المركز</th><th>مستوى</th><th>أجهزة</th><th>دقايق للأقرب</th></tr></thead><tbody id="tp-body"></tbody></table></div></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="app.js"></script>
 </body></html>
