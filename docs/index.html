@@ -3,39 +3,47 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
-<style>html,body,#map{height:100%;margin:0;font-family:system-ui,sans-serif}
-#sum{position:absolute;z-index:1000;top:10px;left:10px;background:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 1px 6px #0004;font-size:13px;max-width:260px}
-#sum select{width:100%;margin-bottom:6px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:4px}
-.cl{width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:#37474f;color:#fff;font-weight:700;border:2px solid #fff;box-shadow:0 1px 4px #0006}.hs{width:22px;height:22px;line-height:22px;text-align:center;background:#1565c0;color:#fff;font-weight:700;border-radius:4px;border:2px solid #fff;box-shadow:0 1px 4px #0006}.pop{direction:rtl;font-size:13px;line-height:1.7}</style></head><body>
-<div id="map"></div><div id="sum"></div>
+<style>
+html,body,#map{height:100%;margin:0;font-family:system-ui,sans-serif}
+#panel{position:absolute;z-index:1000;top:10px;left:10px;width:290px;max-height:calc(100% - 20px);overflow:auto;background:#fff;border-radius:10px;box-shadow:0 1px 8px #0005;font-size:13px}
+#panel select{width:100%;padding:6px;margin:3px 0;font-size:14px}
+.row{padding:4px 12px}.row label{font-weight:700;font-size:12px;color:#555}
+#toggle{display:none;width:100%;padding:10px;border:0;background:#37474f;color:#fff;font-size:14px;border-radius:10px 10px 0 0}
+#card{padding:8px 12px 12px;border-top:1px solid #eee}.ct{font-weight:700;font-size:15px;margin-bottom:4px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-inline-end:5px}
+button.b,#reset{padding:7px 10px;margin:4px 0;font-size:13px;border:1px solid #90a4ae;background:#eceff1;border-radius:6px;cursor:pointer;width:100%}
+.lv{display:flex;gap:10px;flex-wrap:wrap;padding:2px 0}.lv label{font-weight:400;color:#222;font-size:13px}
+small{display:block;color:#777;margin-top:6px}
+.cl{width:34px;height:34px;line-height:34px;text-align:center;border-radius:50%;background:#37474f;color:#fff;font-weight:700;border:2px solid #fff;box-shadow:0 1px 4px #0006}
+.hs{width:22px;height:22px;line-height:22px;text-align:center;background:#1565c0;color:#fff;font-weight:700;border-radius:4px;border:2px solid #fff;box-shadow:0 1px 4px #0006}
+.pop{direction:rtl;font-size:13px;line-height:1.7;max-height:300px;overflow:auto}.pop details{margin-top:4px}.pop li{list-style:none}.on{color:#2e7d32}.off{color:#c62828}
+#tp{display:none;position:absolute;z-index:1100;top:10px;right:10px;bottom:10px;width:360px;background:#fff;border-radius:10px;box-shadow:0 1px 8px #0005;overflow:hidden;flex-direction:column}
+#tp[style*="block"]{display:flex!important}
+#tp-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#37474f;color:#fff;font-weight:700}
+#tp-head button{background:none;border:0;color:#fff;font-size:22px;cursor:pointer}
+#tpw{overflow:auto;flex:1}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:6px 8px;border-bottom:1px solid #eee;text-align:right}
+tbody tr{cursor:pointer}tbody tr:hover{background:#f3f6f8}.sub{font-size:11px;color:#777}.far{color:#c62828;font-weight:700}
+.bar{height:7px;background:#eee;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%}.cov{display:flex;gap:6px;align-items:center;font-size:12px;margin:2px 0}.cov span:first-child{width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cov .bar{flex:1}
+@media(max-width:700px){
+ #panel{left:0;right:0;top:auto;bottom:0;width:auto;max-height:55%;border-radius:12px 12px 0 0}
+ #toggle{display:block}#ctl{display:none}#ctl.open{display:block}
+ #tp{left:0;right:0;top:12%;bottom:0;width:auto;border-radius:12px 12px 0 0}}
+</style></head><body>
+<div id="map"></div>
+<div id="panel">
+ <button id="toggle" type="button">الفلاتر والخيارات</button>
+ <div id="ctl">
+  <div class="row" id="gov-row" hidden><label>المحافظة</label><select id="gov"></select></div>
+  <div class="row" id="admin-row"><label>الإدارة الصحية</label><select id="admin"></select></div>
+  <div class="row"><label>المستويات</label><div class="lv"><label><input type="checkbox" id="lv1" checked> أول</label><label><input type="checkbox" id="lv2" checked> تاني</label><label><input type="checkbox" id="lv3" checked> تالت</label></div></div>
+  <div class="row" id="dev-row" hidden><label>فلتر جهاز (أخضر = متوفر، أحمر = غير متوفر)</label><select id="dev"></select></div>
+  <div class="row"><button class="b" id="tbl" type="button">جدول المراكز (الأبعد أولًا)</button><button class="b" id="csv" type="button">تنزيل CSV</button></div>
+ </div>
+ <div id="card"></div>
+</div>
+<div id="tp"><div id="tp-head"><span id="tp-title"></span><button id="tp-close" type="button">×</button></div>
+ <div id="tpw"><table><thead><tr><th>المركز</th><th>مستوى</th><th>أجهزة</th><th>دقايق للأقرب</th></tr></thead><tbody id="tp-body"></tbody></table></div></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-<script>
-const COL={1:'#d9534f',2:'#f0ad4e',3:'#2e9e5b'}, NAME={1:'مستوى أول',2:'مستوى تاني',3:'مستوى تالت'};
-const map=L.map('map').setView([30.05,31.24],10);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
-const cluster=L.markerClusterGroup({iconCreateFunction:c=>L.divIcon({html:`<div class=cl>${c.getChildCount()}</div>`,className:'',iconSize:[34,34]})}).addTo(map), routeLayer=L.layerGroup().addTo(map);
-const mk=(c,col)=>L.circleMarker([c.lat,c.lon],{radius:8,color:'#fff',weight:2,fillColor:col,fillOpacity:1});
-const fmt=t=>t?`${t.approx?'~':''}${t.min} د (${t.name})`:'غير متاح';
-function row(label,t){return t?`<div>${label}: <b>${fmt(t)}</b></div>`:''}
-fetch('data/built.json').then(r=>r.json()).then(d=>{
-  d.hospitals.forEach(h=>L.marker([h.lat,h.lon],{title:h.name,icon:L.divIcon({html:'<div class=hs>H</div>',className:'',iconSize:[22,22]})}).bindPopup(`<div class=pop>مستشفى معتمدة: ${h.name}</div>`).addTo(map));
-  d.centers.forEach(c=>{
-    const m=mk(c,COL[c.level]);
-    let h=`<div class=pop><b>${c.name}</b><br>${NAME[c.level]}`;
-    if(c.level==1){h+=row('أقرب تاني',c.to.l2)+row('أقرب تالت',c.to.l3)}
-    if(c.level==2)h+=row('أقرب تالت',c.to.l3);
-    if(c.level==3)h+=row('أقرب مستشفى معتمدة',c.to.hospital);
-    m.bindPopup(h+'</div>');
-    m.on('popupopen',()=>{routeLayer.clearLayers();Object.values(c.to).forEach(t=>t&&L.polyline(t.line,{color:'#337ab7',weight:3,dashArray:t.approx?'6 6':null}).addTo(routeLayer))});
-    cluster.addLayer(m);(window._m=window._m||{})[c.id]=m});
-  const q=new URLSearchParams(location.search).get('open');if(q&&_m[q]){cluster.zoomToShowLayer(_m[q],()=>_m[q].openPopup())}
-  const sel=`<select id=g><option value=all>كل المحافظات</option>${d.governorates.map(g=>`<option value=${g.id}>${g.name}</option>`).join('')}</select>`;
-  const draw=id=>{const s=id=='all'?d.all:d.governorates.find(g=>g.id==id).summary;
-    document.getElementById('sum').innerHTML=sel+[1,2,3].map(n=>`<div><span class=dot style="background:${COL[n]}"></span>${NAME[n]}: <b>${s.count['l'+n]}</b></div>`).join('')+
-    `<hr><div>متوسط أول←تاني: ${s.avgMin.l1_to_l2??'-'} د</div><div>أول←تالت: ${s.avgMin.l1_to_l3??'-'} د</div><div>تاني←تالت: ${s.avgMin.l2_to_l3??'-'} د</div><div>تالت←مستشفى: ${s.avgMin.l3_to_hospital??'-'} د</div><small>الدقايق تقريبية، بالسيارة بدون زحمة</small>`;
-    document.getElementById('g').value=id;document.getElementById('g').onchange=e=>draw(e.target.value)};
-  draw('all');
-  if(d.centers.length)map.fitBounds(cluster.getBounds().pad(.1));
-});
-</script></body></html>
+<script src="app.js"></script>
+</body></html>

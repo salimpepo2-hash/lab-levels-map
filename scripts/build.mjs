@@ -77,7 +77,28 @@ for (const g of govs) {
     if (!num(h.lat) || !num(h.lon) || h.lat < 21 || h.lat > 32 || h.lon < 24 || h.lon > 37) die(`${w}: lat/lon missing or outside Egypt`);
   }
 }
-const centers = govs.flatMap(g => g.centers.map(c => ({ ...c, gov: g.id, level: level(c) })));
+// ---- optional per-governorate details: admin (الإدارة الصحية) and the 13-device list ----
+// data/devices.json: device names + which two devices decide the level.
+// data/details/<gov>.json: { "<center id>": { "admin": "...", "devices": [13 counts] } }
+const devCfg = JSON.parse(fs.readFileSync('data/devices.json', 'utf8'));
+for (const g of govs) {
+  const dp = path.join('data/details', g.id + '.json');
+  g.details = fs.existsSync(dp) ? JSON.parse(fs.readFileSync(dp, 'utf8')) : null;
+  if (!g.details) continue;
+  for (const c of g.centers) {
+    const d = g.details[String(c.id)];
+    const w = `${g.id} center ${c.id} in ${dp}`;
+    if (!d) die(`${w}: missing`);
+    if (!d.admin) die(`${w}: admin is required`);
+    if (!Array.isArray(d.devices) || d.devices.length !== devCfg.names.length || !d.devices.every(n => Number.isInteger(n) && n >= 0)) die(`${w}: devices must be ${devCfg.names.length} whole numbers`);
+    const own = devCfg.levelDevices.filter(i => d.devices[i] > 0).length;
+    if (own !== c.devices) console.warn(`WARNING ${w}: device list gives ${own} level devices, center says ${c.devices} (level uses the center value)`);
+  }
+}
+const centers = govs.flatMap(g => g.centers.map(c => {
+  const d = g.details && g.details[String(c.id)];
+  return { ...c, gov: g.id, level: level(c), admin: d ? d.admin : '', deviceList: d ? d.devices : null };
+}));
 const hospitals = govs.flatMap(g => g.hospitals.map(h => ({ ...h, gov: g.id })));
 for (const [k, list] of [['center', centers], ['hospital', hospitals]]) { const ids = new Set(); for (const x of list) { const key = x.gov + ':' + x.id; if (ids.has(key)) die('duplicate ' + k + ' id ' + key); ids.add(key); } }
 const L = n => centers.filter(c => c.level === n);
@@ -102,7 +123,7 @@ const summarize = list => ({
 });
 const out = {
   governorates: govs.map(g => ({ id: g.id, name: g.name, summary: summarize(centers.filter(c => c.gov === g.id)) })),
-  all: summarize(centers), centers, hospitals
+  all: summarize(centers), deviceNames: devCfg.names, centers, hospitals
 };
 if (STRICT) {
   const est = centers.flatMap(c => Object.values(c.to)).filter(t => t && t.approx).length;
