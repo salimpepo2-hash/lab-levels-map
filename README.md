@@ -1,6 +1,6 @@
 # lab-levels-map
 
-Static map of lab centers by capability level, with drive minutes to the nearest higher level. Governorate-agnostic: Cairo first, others added as new data files.
+Static map of lab centers by capability level, with drive minutes to the nearest higher level. Governorate-agnostic: Cairo first, others added as new data files. Changes go through the Issue and /apply flow described below.
 
 ## Levels (rule in `scripts/build.mjs`, function `level`)
 - L1: no devices
