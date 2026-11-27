@@ -1,0 +1,27 @@
+name: Check
+
+# Runs on every PR into main and on pushes to dev.
+# Fails if the data is invalid, if any road minute is missing from the cache,
+# or if docs/data/built.json is out of date with the data.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node scripts/build.mjs --offline --strict
+      - name: built.json must match the data
+        run: |
+          git diff --exit-code -- docs/data/built.json data/cache/routes.json \
+            || (echo "Built files are out of date. Run the build and commit them." && exit 1)

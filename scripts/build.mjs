@@ -1,12 +1,16 @@
 // Builds docs/data/built.json from data/governorates/*.json
 // Levels + nearest targets are computed across ALL governorates together.
 // Road minutes come from OSRM, cached in data/cache/routes.json (committed).
-// Usage: node scripts/build.mjs [--offline]   (offline = straight-line estimate only for cache misses)
+// Usage: node scripts/build.mjs [--offline] [--strict]
+//   --offline: no network; cache misses become straight-line estimates
+//   --strict : fail if any minute is an estimate or any input is invalid (used by apply and checks)
 import fs from 'node:fs';
 import path from 'node:path';
 
 const OSRM = process.env.OSRM_URL || 'https://router.project-osrm.org';
 const OFFLINE = process.argv.includes('--offline');
+const STRICT = process.argv.includes('--strict');
+const die = m => { console.error('ERROR: ' + m); process.exit(1); };
 const EST_KMH = 30, DETOUR = 1.4; // fallback estimate, marked approx
 const gdir = 'data/governorates', cpath = 'data/cache/routes.json';
 const cache = fs.existsSync(cpath) ? JSON.parse(fs.readFileSync(cpath, 'utf8')) : {};
@@ -55,9 +59,27 @@ async function nearest(from, pool) {
 
 const govs = fs.readdirSync(gdir).filter(f => f.endsWith('.json') && !f.startsWith('example') || process.env.INCLUDE_EXAMPLE)
   .map(f => JSON.parse(fs.readFileSync(path.join(gdir, f), 'utf8')));
+// ---- input validation (always on) ----
+const num = v => typeof v === 'number' && Number.isFinite(v);
+for (const g of govs) {
+  if (!g.id || !g.name || !Array.isArray(g.centers) || !Array.isArray(g.hospitals)) die(`governorate file needs id, name, centers, hospitals (${g.id || '?'})`);
+  for (const c of g.centers) {
+    const w = `${g.id} center ${c.id}`;
+    if (c.id === undefined || !c.name) die(`${w}: id and name are required`);
+    if (!num(c.lat) || !num(c.lon) || c.lat < 21 || c.lat > 32 || c.lon < 24 || c.lon > 37) die(`${w}: lat/lon missing or outside Egypt`);
+    if (![0, 1, 2].includes(c.devices)) die(`${w}: devices must be 0, 1 or 2`);
+    if (!['accredited', 'in_progress', 'none'].includes(c.accreditation)) die(`${w}: accreditation must be accredited | in_progress | none`);
+    if (!['rooms', 'physical', 'partial', 'none'].includes(c.separation)) die(`${w}: separation must be rooms | physical | partial | none`);
+  }
+  for (const h of g.hospitals) {
+    const w = `${g.id} hospital ${h.id}`;
+    if (h.id === undefined || !h.name) die(`${w}: id and name are required`);
+    if (!num(h.lat) || !num(h.lon) || h.lat < 21 || h.lat > 32 || h.lon < 24 || h.lon > 37) die(`${w}: lat/lon missing or outside Egypt`);
+  }
+}
 const centers = govs.flatMap(g => g.centers.map(c => ({ ...c, gov: g.id, level: level(c) })));
 const hospitals = govs.flatMap(g => g.hospitals.map(h => ({ ...h, gov: g.id })));
-for (const [k, list] of [['center', centers], ['hospital', hospitals]]) { const ids = new Set(); for (const x of list) { const key = x.gov + ':' + x.id; if (ids.has(key)) throw new Error('duplicate ' + k + ' id ' + key); ids.add(key); } }
+for (const [k, list] of [['center', centers], ['hospital', hospitals]]) { const ids = new Set(); for (const x of list) { const key = x.gov + ':' + x.id; if (ids.has(key)) die('duplicate ' + k + ' id ' + key); ids.add(key); } }
 const L = n => centers.filter(c => c.level === n);
 
 for (const c of centers) {
@@ -79,10 +101,14 @@ const summarize = list => ({
   }
 });
 const out = {
-  generated: new Date().toISOString(),
   governorates: govs.map(g => ({ id: g.id, name: g.name, summary: summarize(centers.filter(c => c.gov === g.id)) })),
   all: summarize(centers), centers, hospitals
 };
+if (STRICT) {
+  const est = centers.flatMap(c => Object.values(c.to)).filter(t => t && t.approx).length;
+  if (est) die(`${est} routes are estimates (no cached road route). Run the build online and commit data/cache/routes.json.`);
+}
+if (!centers.length) die('no centers found');
 fs.mkdirSync('docs/data', { recursive: true });
 fs.writeFileSync('docs/data/built.json', JSON.stringify(out));
 fs.writeFileSync(cpath, JSON.stringify(cache));
