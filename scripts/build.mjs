@@ -44,7 +44,7 @@ async function route(a, b) {
 
 // nearest by road among the 3 closest straight-line candidates
 async function nearest(from, pool) {
-  const cands = pool.filter(p => p.id !== from.id).sort((x, y) => hav(from, x) - hav(from, y)).slice(0, 3);
+  const cands = pool.filter(p => p !== from).sort((x, y) => hav(from, x) - hav(from, y)).slice(0, 3);
   let best = null;
   for (const c of cands) {
     const r = await route(from, c);
@@ -57,7 +57,7 @@ const govs = fs.readdirSync(gdir).filter(f => f.endsWith('.json') && !f.startsWi
   .map(f => JSON.parse(fs.readFileSync(path.join(gdir, f), 'utf8')));
 const centers = govs.flatMap(g => g.centers.map(c => ({ ...c, gov: g.id, level: level(c) })));
 const hospitals = govs.flatMap(g => g.hospitals.map(h => ({ ...h, gov: g.id })));
-const ids = new Set(); for (const x of [...centers, ...hospitals]) { if (ids.has(x.gov + x.id)) throw new Error('duplicate id ' + x.id); ids.add(x.gov + x.id); }
+for (const [k, list] of [['center', centers], ['hospital', hospitals]]) { const ids = new Set(); for (const x of list) { const key = x.gov + ':' + x.id; if (ids.has(key)) throw new Error('duplicate ' + k + ' id ' + key); ids.add(key); } }
 const L = n => centers.filter(c => c.level === n);
 
 for (const c of centers) {

@@ -1,0 +1,638 @@
+{
+ "id": "cairo",
+ "name": "القاهرة",
+ "centers": [
+  {
+   "id": 1,
+   "name": "مركز طب اسره سراي القبة",
+   "district": "الاميرية و الزيتون",
+   "lat": 30.09873,
+   "lon": 31.30624,
+   "devices": 1,
+   "accreditation": "in_progress",
+   "separation": "rooms"
+  },
+  {
+   "id": 2,
+   "name": "مركز طبي الزيتون",
+   "district": "",
+   "lat": 30.11100822316042,
+   "lon": 31.308808532046744,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 3,
+   "name": "مركز طب اسرة الدلتا",
+   "district": "السلام اول",
+   "lat": 30.174581,
+   "lon": 31.4189795,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "rooms"
+  },
+  {
+   "id": 4,
+   "name": "مركز طب اسرة السد العالي",
+   "district": "",
+   "lat": 30.1352638,
+   "lon": 31.3579886,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 5,
+   "name": "مركز طب اسرة السلام اول",
+   "district": "",
+   "lat": 30.1352638,
+   "lon": 31.3579886,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "rooms"
+  },
+  {
+   "id": 6,
+   "name": "مركز طب اسرة السلام ثان",
+   "district": "",
+   "lat": 30.1790747,
+   "lon": 31.4104797,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 7,
+   "name": "مركز طب اسرة العبد",
+   "district": "",
+   "lat": 30.1202986,
+   "lon": 31.4021872,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 8,
+   "name": "مركز طب اسرة اهالينا",
+   "district": "",
+   "lat": 30.1475815,
+   "lon": 31.3900337,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "rooms"
+  },
+  {
+   "id": 9,
+   "name": "مركز طبي الطريقي",
+   "district": "",
+   "lat": 30.1642523,
+   "lon": 31.4065979,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 10,
+   "name": "مركز طب اسرة المحروسه",
+   "district": "السلام ثان",
+   "lat": 30.1908353,
+   "lon": 31.4324216,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "rooms"
+  },
+  {
+   "id": 11,
+   "name": "مركز طب اسرة النهضة",
+   "district": "",
+   "lat": 30.16998014046438,
+   "lon": 31.429092703426964,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 12,
+   "name": "مركز طب اسرة النهضة الجديد",
+   "district": "",
+   "lat": 30.18407687289012,
+   "lon": 31.445585328072543,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 13,
+   "name": "مركز طب اسرة النهضة القديم",
+   "district": "",
+   "lat": 30.1698252,
+   "lon": 31.4417588,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 14,
+   "name": "مركز طب اسرة روضة العبور",
+   "district": "",
+   "lat": 30.1850133,
+   "lon": 31.42862,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 15,
+   "name": "مركز طب اسرة معاً",
+   "district": "",
+   "lat": 30.1823,
+   "lon": 31.4098,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 16,
+   "name": "مركز طب اسرة 100 م",
+   "district": "الشروق",
+   "lat": 30.1639634,
+   "lon": 31.6515895,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "physical"
+  },
+  {
+   "id": 17,
+   "name": "مركز طب اسرة 63 م",
+   "district": "",
+   "lat": 30.1809821,
+   "lon": 31.6334074,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "physical"
+  },
+  {
+   "id": 18,
+   "name": "مركز طب اسرة 70 م",
+   "district": "",
+   "lat": 30.151641581749356,
+   "lon": 31.656431779754787,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 19,
+   "name": "مركز طب اسرة الريحان",
+   "district": "",
+   "lat": 30.171444404936388,
+   "lon": 31.648156790673333,
+   "devices": 1,
+   "accreditation": "in_progress",
+   "separation": "partial"
+  },
+  {
+   "id": 20,
+   "name": "مركز طب اسرة المستقبل",
+   "district": "",
+   "lat": 30.138550220290774,
+   "lon": 31.659688541045014,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 21,
+   "name": "مركز طب اسرة ابو صير",
+   "district": "المرج",
+   "lat": 30.1710794,
+   "lon": 31.3855672,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 22,
+   "name": "مركز طب اسرة الاندلس",
+   "district": "",
+   "lat": 30.1414194,
+   "lon": 31.3360784,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 23,
+   "name": "مركز طب اسرة المرج الشرقية",
+   "district": "",
+   "lat": 30.1500874,
+   "lon": 31.3378308,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 24,
+   "name": "مركز طب اسرة بركة الحاج",
+   "district": "",
+   "lat": 30.1483107,
+   "lon": 31.3600953,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 25,
+   "name": "مركز طب اسرة كفر الشرفا",
+   "district": "",
+   "lat": 30.1439109,
+   "lon": 31.3514872,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 26,
+   "name": "مركز طبي عين شمس بالمرج",
+   "district": "",
+   "lat": 30.1335,
+   "lon": 31.3392,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 27,
+   "name": "مركز طب اسرة الخبيري",
+   "district": "المعادى و طره",
+   "lat": 29.9694,
+   "lon": 31.2507,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 28,
+   "name": "مركز طب اسرة المحكمة",
+   "district": "النزهه",
+   "lat": 30.1045354,
+   "lon": 31.3294616,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 29,
+   "name": "مركز طب اسرة النزهة الجديدة",
+   "district": "",
+   "lat": 30.121835962353515,
+   "lon": 31.37208325322297,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "rooms"
+  },
+  {
+   "id": 30,
+   "name": "مركز طب اسرة الهايكستب",
+   "district": "",
+   "lat": 30.141098,
+   "lon": 31.4241614,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 31,
+   "name": "مركز طب اسرة شيراتون",
+   "district": "",
+   "lat": 30.1037,
+   "lon": 31.3816,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 32,
+   "name": "مركز طب اسرة الاندلس أ",
+   "district": "بدر",
+   "lat": 30.160494,
+   "lon": 31.7404441,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "rooms"
+  },
+  {
+   "id": 33,
+   "name": "مركز طب اسرة الحي الاول",
+   "district": "",
+   "lat": 30.137865549293284,
+   "lon": 31.723691692683197,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 34,
+   "name": "مركز طب اسرة الحي الثالث",
+   "district": "",
+   "lat": 30.1327428,
+   "lon": 31.707796,
+   "devices": 2,
+   "accreditation": "in_progress",
+   "separation": "physical"
+  },
+  {
+   "id": 35,
+   "name": "مركز طب اسرة الحي الخامس",
+   "district": "",
+   "lat": 30.1627017,
+   "lon": 31.7014508,
+   "devices": 2,
+   "accreditation": "in_progress",
+   "separation": "physical"
+  },
+  {
+   "id": 36,
+   "name": "مركز طب اسرة الروبيكي",
+   "district": "",
+   "lat": 30.1220905,
+   "lon": 31.7508994,
+   "devices": 1,
+   "accreditation": "in_progress",
+   "separation": "physical"
+  },
+  {
+   "id": 37,
+   "name": "مركز طب اسرة زهرة العاصمة",
+   "district": "",
+   "lat": 30.1274,
+   "lon": 31.7359,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "physical"
+  },
+  {
+   "id": 38,
+   "name": "مركز طب اسرة سكن مصر",
+   "district": "",
+   "lat": 30.1233192,
+   "lon": 31.7758281,
+   "devices": 1,
+   "accreditation": "accredited",
+   "separation": "physical"
+  },
+  {
+   "id": 39,
+   "name": "مركز طب اسرة وسط المدينة",
+   "district": "",
+   "lat": 30.1475184,
+   "lon": 31.7325399,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 40,
+   "name": "مركز طب اسرة الجلاء",
+   "district": "بولاق",
+   "lat": 30.057344,
+   "lon": 31.2398134,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 41,
+   "name": "مركز طب اسرة بولاق",
+   "district": "",
+   "lat": 30.0584413,
+   "lon": 31.2358366,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 42,
+   "name": "مركز طبى الرمله",
+   "district": "",
+   "lat": 30.0705839,
+   "lon": 31.230474,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 43,
+   "name": "مركز طب اسرة حدائق العاصمة",
+   "district": "حدائق العاصمة",
+   "lat": 30.1608407,
+   "lon": 31.8079492,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "physical"
+  },
+  {
+   "id": 44,
+   "name": "مركز طب اسرة الخيالة",
+   "district": "دار السلام و البساتين",
+   "lat": 29.993659,
+   "lon": 31.2536257,
+   "devices": 2,
+   "accreditation": "accredited",
+   "separation": "rooms"
+  },
+  {
+   "id": 45,
+   "name": "مركز طب اسرة العوضي",
+   "district": "",
+   "lat": 29.9772335,
+   "lon": 31.2709924,
+   "devices": 0,
+   "accreditation": "in_progress",
+   "separation": "physical"
+  },
+  {
+   "id": 46,
+   "name": "مركز طب اسرة المعادي الجديد",
+   "district": "",
+   "lat": 29.9738505,
+   "lon": 31.2715176,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "none"
+  },
+  {
+   "id": 47,
+   "name": "مركز طب اسرة المعراج",
+   "district": "",
+   "lat": 29.9738505,
+   "lon": 31.2715176,
+   "devices": 1,
+   "accreditation": "in_progress",
+   "separation": "physical"
+  },
+  {
+   "id": 48,
+   "name": "مركز طب اسرة بساتين شرق",
+   "district": "",
+   "lat": 29.98756927241798,
+   "lon": 31.2700023985757,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 49,
+   "name": "مركز طب اسرة بساتين غرب",
+   "district": "",
+   "lat": 29.9820694,
+   "lon": 31.2662298,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 50,
+   "name": "مركز طب اسرة صقر قريش",
+   "district": "",
+   "lat": 29.984,
+   "lon": 31.284,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 51,
+   "name": "مركز طب اسرة عزبة النصر",
+   "district": "",
+   "lat": 29.9898282,
+   "lon": 31.2780529,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "rooms"
+  },
+  {
+   "id": 52,
+   "name": "مركز طبي عزبة الورد",
+   "district": "",
+   "lat": 29.9877,
+   "lon": 31.2435,
+   "devices": 0,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 53,
+   "name": "مركز طب اسرة جزيرة بدران",
+   "district": "روض الفرج",
+   "lat": 30.0778,
+   "lon": 31.2436,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 54,
+   "name": "مركز طب اسرة روض الفرج",
+   "district": "",
+   "lat": 30.072564481509897,
+   "lon": 31.235466892635127,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 55,
+   "name": "مركز طبي السبتية",
+   "district": "",
+   "lat": 30.06838417661253,
+   "lon": 31.235393017519627,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 56,
+   "name": "مركز طب اسرة الزهراء عين شمس",
+   "district": "عين شمس",
+   "lat": 30.1352083,
+   "lon": 31.3498228,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 57,
+   "name": "مركز طب اسرة عين شمس",
+   "district": "",
+   "lat": 30.1319814,
+   "lon": 31.3554557,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 58,
+   "name": "مركز طبى مطرية اول",
+   "district": "",
+   "lat": 30.1228,
+   "lon": 31.2875,
+   "devices": 2,
+   "accreditation": "none",
+   "separation": "physical"
+  },
+  {
+   "id": 59,
+   "name": "مركز طب اسرة الامل",
+   "district": "نصر شرق",
+   "lat": 30.0622247,
+   "lon": 31.3809465,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "partial"
+  },
+  {
+   "id": 60,
+   "name": "مركز طب اسرة الحى السابع",
+   "district": "",
+   "lat": 30.0586,
+   "lon": 31.3459,
+   "devices": 1,
+   "accreditation": "none",
+   "separation": "partial"
+  }
+ ],
+ "hospitals": [
+  {
+   "id": 1,
+   "name": "مستشفي عين شمس العام",
+   "lat": 30.132451696902,
+   "lon": 31.355828717351
+  },
+  {
+   "id": 2,
+   "name": "مستشفي دار السلام العام",
+   "lat": 30.012509710485,
+   "lon": 31.228975905922
+  },
+  {
+   "id": 3,
+   "name": "مستشفي البكري العام",
+   "lat": 30.091588885399,
+   "lon": 31.306718140841
+  },
+  {
+   "id": 4,
+   "name": "مستشفي الشروق المركزي",
+   "lat": 30.155477215504,
+   "lon": 31.618031412363
+  },
+  {
+   "id": 5,
+   "name": "مستشفي روض الفرج العام",
+   "lat": 30.071643815297,
+   "lon": 31.234786659479
+  }
+ ]
+}
